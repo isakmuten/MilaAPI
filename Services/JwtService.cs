@@ -5,6 +5,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
+
+namespace MilaAPI.Services
+{
+
 public class JwtService
 {
 	private readonly string _secretKey;
@@ -38,7 +42,9 @@ public class JwtService
 		};
 
 		var token = tokenHandler.CreateToken(tokenDescriptor);
-		return tokenHandler.WriteToken(token);
+			var tokenString = tokenHandler.WriteToken(token);
+			Console.WriteLine($"Generated JWT: {tokenString}");
+			return tokenHandler.WriteToken(token);
 	}
 
 	public ClaimsPrincipal ValidateToken(string token)
@@ -68,4 +74,5 @@ public class JwtService
 			return null;
 		}
 	}
+}
 }

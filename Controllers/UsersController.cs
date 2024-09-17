@@ -4,8 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using MilaAPI.Models;
 using MilaAPI.DTOs;
 using MilaAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 
-
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
@@ -57,6 +58,7 @@ public class UsersController : ControllerBase
 		var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == userDto.Email);
 		if (user == null)
 		{
+			Console.WriteLine("Email not found.");
 			return Unauthorized("Invalid email or password");
 		}
 
@@ -65,18 +67,23 @@ public class UsersController : ControllerBase
 
 		if (passwordVerificationResult == PasswordVerificationResult.Failed)
 		{
+			Console.WriteLine("Password verification failed.");
 			return Unauthorized("Invalid email or password");
 		}
 
 		// Generera JWT-token efter lyckad inloggning
 		var token = _jwtService.GenerateToken(user);
 
-		return Ok(new { Token = token });
+		return Ok(new
+		{
+			access_token = token,
+			token_type = "bearer"
+		});
 	}
 
 	// GET: api/Users/{id}
 	[HttpGet("{id}")]
-	[Authorize] // Skyddad endpoint - kräver JWT
+	[Authorize]
 	public async Task<ActionResult<User>> GetUser(int id)
 	{
 		var user = await _context.Users.FindAsync(id);
@@ -89,7 +96,7 @@ public class UsersController : ControllerBase
 
 	// GET: api/Users
 	[HttpGet]
-	[Authorize] // Skyddad endpoint - kräver JWT
+	[Authorize]// Skyddad endpoint - kräver JWT
 	public async Task<ActionResult<IEnumerable<User>>> GetUsers()
 	{
 		return await _context.Users.ToListAsync();
@@ -97,7 +104,7 @@ public class UsersController : ControllerBase
 
 	// PUT: api/Users/{id}
 	[HttpPut("{id}")]
-	[Authorize] // Skyddad endpoint - kräver JWT
+	[Authorize]// Skyddad endpoint - kräver JWT
 	public async Task<IActionResult> UpdateUser(int id, User user)
 	{
 		if (id != user.Id)
@@ -128,7 +135,7 @@ public class UsersController : ControllerBase
 
 	// DELETE: api/Users/{id}
 	[HttpDelete("{id}")]
-	[Authorize] // Skyddad endpoint - kräver JWT
+	[Authorize]// Skyddad endpoint - kräver JWT
 	public async Task<IActionResult> DeleteUser(int id)
 	{
 		var user = await _context.Users.FindAsync(id);

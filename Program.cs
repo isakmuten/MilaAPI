@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MilaAPI.Services;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,25 +10,71 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MilaContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+
+builder.Services.AddSingleton(new JwtService(
+	jwtSettings["Key"],
+	jwtSettings["Issuer"],
+	jwtSettings["Audience"]
+));
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-	.AddJwtBearer(options =>
+.AddJwtBearer(options =>
+{
+	options.Events = new JwtBearerEvents
 	{
-		options.TokenValidationParameters = new TokenValidationParameters
+		OnAuthenticationFailed = context =>
 		{
-			ValidateIssuer = true,
-			ValidateAudience = true,
-			ValidateLifetime = true,
-			ValidateIssuerSigningKey = true,
-			ValidIssuer = "http://localhost",  // Placeholder för utveckling
-			ValidAudience = "http://localhost", // Placeholder för utveckling
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Xc9jQ3p!84JsyWwC@vMm&gLkT2$zA#6E"))
-		};
-	});
+			Console.WriteLine("Authentication failed: " + context.Exception.Message);
+			return Task.CompletedTask;
+		},
+		OnTokenValidated = context =>
+		{
+			Console.WriteLine("Token validated successfully");
+			return Task.CompletedTask;
+		}
+	};
+
+	options.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = jwtSettings["Issuer"],
+		ValidAudience = jwtSettings["Audience"],
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+	};
+});
+
 
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+	c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+	{
+		In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+		Description = "Please enter JWT with Bearer into field",
+		Name = "Authorization",
+		Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
+	});
+	c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+	{
+		{
+			new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+			{
+				Reference = new Microsoft.OpenApi.Models.OpenApiReference
+				{
+					Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+					Id = "Bearer"
+				}
+			},
+			new string[] {}
+		}
+	});
+});
 
 var app = builder.Build();
 
@@ -39,6 +86,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();
