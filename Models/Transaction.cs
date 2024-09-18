@@ -24,19 +24,23 @@ namespace MilaAPI.Models
 		public string Description { get; set; }
 
 		[Required]
-		public TransactionType Type { get; set; } // Could be Enum (Expense, Income, Transfer)
+		public TransactionType Type { get; set; }
+
 
 		[Required]
 		public int CategoryId { get; set; }
-		public Category Category { get; set; } // Navigation Property to Category
+
+		public Category Category { get; set; }
+
 
 		[Required]
 		public int UserId { get; set; }
-		public User User { get; set; } // Navigation Property to User
 
-		public PaymentMethod PaymentMethod { get; set; } // Payment method (optional)
+		public User User { get; set; }
 
-		// Any other fields like Merchant, ReferenceNumber, etc.
+
+		public PaymentMethod PaymentMethod { get; set; }
+
 	}
 
 	public enum TransactionType

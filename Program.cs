@@ -51,6 +51,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Add NotificationService as a scoped service
 builder.Services.AddScoped<NotificationService>();
 
+// Add TransactionProcessingService as a scoped service
+builder.Services.AddScoped<TransactionProcessingService>();
+
 // Add NotificationBackgroundService as a hosted service
 builder.Services.AddHostedService<NotificationBackgroundService>();
 
@@ -90,6 +93,18 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Apply migrations and seed the database
+using (var scope = app.Services.CreateScope())
+{
+	var context = scope.ServiceProvider.GetRequiredService<MilaContext>();
+
+	// Apply any pending migrations
+	context.Database.Migrate();
+
+	// Call the SeedUsers method to seed users
+	DataSeeder.SeedUsers(context);
+}
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

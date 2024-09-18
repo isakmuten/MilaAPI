@@ -56,9 +56,9 @@ public class MilaContext : DbContext
 		base.OnModelCreating(modelBuilder);
 
 		modelBuilder.Entity<Category>().HasData(
-			new Category { Id = 1, Name = "Food", Description = "Expenses for food and groceries" },
-			new Category { Id = 2, Name = "Rent", Description = "Monthly rent payments" },
-			new Category { Id = 3, Name = "Entertainment", Description = "Movies, concerts, and other fun activities" }
+			new Category { Id = 1, Name = "Food", Description = "Expenses for food and groceries", IsExpenseCategory = true },
+			new Category { Id = 2, Name = "Rent", Description = "Monthly rent payments", IsExpenseCategory = true },
+			new Category { Id = 3, Name = "Entertainment", Description = "Movies, concerts, and other fun activities", IsExpenseCategory = true }
 		);
 	}
 
