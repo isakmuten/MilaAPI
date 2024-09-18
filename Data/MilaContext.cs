@@ -16,7 +16,13 @@ public class MilaContext : DbContext
 		modelBuilder.Entity<Expense>()
 			.Property(e => e.Amount)
 			.HasPrecision(18, 2); // 18 digits total, 2 digits after decimal point
-	
+		
+		modelBuilder.Entity<Transaction>()
+				.Property(e => e.Amount)
+				.HasPrecision(18, 2);
+		modelBuilder.Entity<Transaction>()
+				.Property(e => e.Balance)
+				.HasPrecision(18, 2);
 
 		base.OnModelCreating(modelBuilder);
 
