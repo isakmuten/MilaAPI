@@ -25,6 +25,8 @@ namespace MilaAPI.Models
 		public RecurrenceType Recurrence { get; set; }  // Daily, Weekly, Monthly, Yearly
 
 		public bool IsActive { get; set; }  // Determines if the recurring expense is active
+		public DateTime NextDueDate { get; set; }
+		public string Name { get; set; }
 	}
 
 	public enum RecurrenceType

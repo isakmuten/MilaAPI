@@ -21,6 +21,13 @@ namespace MilaAPI.Models
 		public decimal Amount { get; set; }  // Budget amount
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
-		public bool IsActive { get; set; }  // Status of the budget
+		public bool IsActive { get; set; }
+		
+		[Column(TypeName = "decimal(18,2)")]
+		public decimal CurrentAmount { get; set; }
+
+		[Column(TypeName = "decimal(18,2)")]
+		public decimal Limit { get; set; }
+		public string Name { get; set; }
 	}
 }

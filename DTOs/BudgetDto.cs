@@ -8,5 +8,8 @@
 		public DateTime StartDate { get; set; }
 		public DateTime EndDate { get; set; }
 		public bool IsActive { get; set; }
+		public decimal CurrentAmount { get; set; }
+		public decimal Limit { get; set; }
+		public string Name { get; set; }
 	}
 }

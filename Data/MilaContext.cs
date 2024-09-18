@@ -12,6 +12,7 @@ public class MilaContext : DbContext
 	public DbSet<Budget> Budgets { get; set; }
 	public DbSet<RecurringExpense> RecurringExpenses { get; set; }
 	public DbSet<SavingGoal> SavingGoals { get; set; }
+	public DbSet<Notification> Notifications { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
@@ -31,7 +32,15 @@ public class MilaContext : DbContext
 		modelBuilder.Entity<Budget>()
 			.Property(t => t.Amount)
 			.HasColumnType("decimal(18, 2)");
-		
+
+		modelBuilder.Entity<Budget>()
+			.Property(t => t.CurrentAmount)
+			.HasColumnType("decimal(18, 2)");
+
+		modelBuilder.Entity<Budget>()
+			.Property(t => t.Limit)
+			.HasColumnType("decimal(18, 2)");
+
 		modelBuilder.Entity<RecurringExpense>()
 			.Property(t => t.Amount)
 			.HasColumnType("decimal(18, 2)");

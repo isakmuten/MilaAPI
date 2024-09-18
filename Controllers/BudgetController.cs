@@ -30,7 +30,10 @@ namespace MilaAPI.Controllers
 					Amount = b.Amount,
 					StartDate = b.StartDate,
 					EndDate = b.EndDate,
-					IsActive = b.IsActive
+					IsActive = b.IsActive,
+					CurrentAmount = b.CurrentAmount,
+					Limit = b.Limit,
+					Name = b.Name
 				})
 				.ToListAsync();
 
@@ -77,7 +80,10 @@ namespace MilaAPI.Controllers
 				Amount = budgetDto.Amount,
 				StartDate = budgetDto.StartDate,
 				EndDate = budgetDto.EndDate,
-				IsActive = budgetDto.IsActive
+				IsActive = budgetDto.IsActive,
+				CurrentAmount = budgetDto.CurrentAmount,
+				Limit = budgetDto.Limit,
+				Name = budgetDto.Name
 			};
 
 			_context.Budgets.Add(budget);
@@ -112,6 +118,9 @@ namespace MilaAPI.Controllers
 			budget.StartDate = budgetDto.StartDate;
 			budget.EndDate = budgetDto.EndDate;
 			budget.IsActive = budgetDto.IsActive;
+			budget.CurrentAmount = budgetDto.CurrentAmount;
+			budget.Limit = budgetDto.Limit;
+			budget.Name = budgetDto.Name;
 
 			_context.Entry(budget).State = EntityState.Modified;
 

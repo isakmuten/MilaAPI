@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MilaAPI.Migrations
 {
     [DbContext(typeof(MilaContext))]
-    partial class MilaContextModelSnapshot : ModelSnapshot
+    [Migration("20240918114628_AddedProperties")]
+    partial class AddedProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,8 +79,8 @@ namespace MilaAPI.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("CurrentAmount")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("CurrentAmount")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -85,8 +88,8 @@ namespace MilaAPI.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("Limit")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("Limit")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
