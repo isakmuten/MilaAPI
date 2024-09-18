@@ -6,7 +6,7 @@ using MilaAPI.DTOs;
 using MilaAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
