@@ -1,0 +1,118 @@
+﻿Entities Summary
+1. User Entity:
+   * Purpose: Represents each user in the system.
+   * Attributes:
+      * Id: Unique identifier for the user.
+      * FirstName: The user’s first name.
+      * LastName: The user’s last name.
+      * Email: The user’s email address, used for authentication.
+      * PasswordHash: Hashed version of the user’s password.
+      * Role: Role of the user (e.g., admin, standard user).
+      * DateCreated: Date the user account was created.
+      * IsActive: Boolean flag to indicate if the user account is active.
+   * Relationships: One-to-Many relationship with transactions, expenses, budgets, notifications, and saving goals.
+
+2. Transaction Entity:
+   * Purpose: Records financial transactions related to user activities.
+   * Attributes:
+      * Id: Unique identifier for the transaction.
+      * UserId: Foreign key linking to the User who made the transaction.
+      * Amount: The amount involved in the transaction.
+      * Balance: The balance after the transaction is processed.
+      * Date: The date of the transaction.
+      * Description: A description of the transaction.
+      * CategoryId: Foreign key linking the transaction to a category.
+      * PaymentMethod: Specifies how the transaction was made (e.g., credit card, bank transfer).
+   * Relationships: Many-to-One with Category; Many-to-One with User.
+
+3. Category Entity:
+   * Purpose: Represents different categories for expenses and transactions.
+   * Attributes:
+      * Id: Unique identifier for the category.
+      * Name: Name of the category (e.g., Food, Rent).
+      * Description: Optional description for the category.
+   * Relationships: One-to-Many with transactions and expenses.
+
+4. Expense Entity:
+   * Purpose: Tracks the user's expenses.
+   * Attributes:
+      * Id: Unique identifier for the expense.
+      * UserId: Foreign key linking to the User.
+      * Amount: Amount spent.
+      * Date: Date of the expense.
+      * Description: Description of the expense.
+      * CategoryId: Foreign key linking the expense to a category.
+   * Relationships: Many-to-One with Category; Many-to-One with User.
+
+5. Budget Entity:
+   * Purpose: Tracks user-defined budgets over certain time periods.
+   * Attributes:
+      * Id: Unique identifier for the budget.
+      * UserId: Foreign key linking to the User.
+      * TotalAmount: Total budget amount.
+      * CurrentAmount: The amount spent from the budget so far.
+      * StartDate: When the budget period begins.
+      * EndDate: When the budget period ends.
+      * Limit: The maximum spending limit for the budget.
+   * Relationships: One-to-Many with the user, related to expenses for tracking.
+
+6. Notification Entity:
+   * Purpose: Used to send reminders or alerts to users.
+   * Attributes:
+      * Id: Unique identifier for the notification.
+      * UserId: Foreign key linking to the User.
+      * Message: Notification content.
+      * DateCreated: When the notification was created.
+      * IsRead: Boolean flag to track if the notification has been read.
+      * Type: Type of notification (e.g., budget limit, savings goal).
+   * Relationships: Many-to-One with User.
+
+7. RecurringExpense Entity:
+   * Purpose: Tracks recurring expenses such as subscriptions.
+   * Attributes:
+      * Id: Unique identifier for the recurring expense.
+      * UserId: Foreign key linking to the User.
+      * Amount: Amount for the recurring expense.
+      * Name: Name of the recurring expense.
+      * NextDueDate: The date the next recurring payment is due.
+      * Frequency: How often the payment recurs (e.g., monthly, weekly).
+   * Relationships: Many-to-One with User.
+
+8. SavingGoal Entity:
+   * Purpose: Tracks saving goals users set for themselves.
+   * Attributes:
+      * Id: Unique identifier for the saving goal.
+      * UserId: Foreign key linking to the User.
+      * TargetAmount: The goal amount the user wants to save.
+      * CurrentAmount: The amount saved so far.
+      * Deadline: The deadline for achieving the goal.
+   * Relationships: Many-to-One with User.
+
+9. PaymentMethod Entity:
+   * Purpose: Stores information about a user’s payment methods.
+   * Attributes:
+      * Id: Unique identifier for the payment method.
+      * UserId: Foreign key linking to the User.
+      * Type: The type of payment method (e.g., credit card, Apple Pay).
+      * LastFourDigits: Last four digits of the card for identification.
+      * ExpiryDate: Expiration date of the card (if applicable).
+   * Relationships: Many-to-One with User.
+________________
+
+
+Current Features Built
+1. User Authentication & JWT Token Generation:
+   * Registration and Login: Users can register and log in, and the system hashes passwords using a PasswordHasher.
+   * JWT Token: Generated upon successful login for secure API access.
+2. Core Models:
+   * Created models for User, Expense, Transaction, Budget, Category, RecurringExpense, SavingGoal, and Notification.
+3. Transaction and Expense Logic:
+   * A TransactionProcessingService automatically links transactions to expenses and triggers notifications if needed.
+4. Notification System:
+   * Built a NotificationService to manage sending notifications to users, integrated with a background service that checks for recurring expenses, saving goals, and budgets.
+5. Controllers:
+   * Created controllers for Transaction, Expense, and Category with full CRUD operations.
+   * Integrated DTOs for better data transfer and validation.
+6. IHostedService Integration:
+   * A background service (NotificationBackgroundService) periodically checks the database to trigger notifications for various conditions such as overdue recurring expenses, saving goal deadlines, and budgets nearing their limits.
+________________
