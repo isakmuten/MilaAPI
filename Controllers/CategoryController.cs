@@ -25,7 +25,7 @@ namespace MilaAPI.Controllers
 
 		// GET: api/Category/{id}
 		[HttpGet("{id}")]
-		public async Task<ActionResult<Category>> GetCategory(int id)
+		public async Task<ActionResult<CategoryDto>> GetCategory(int id)
 		{
 			var category = await _context.Categories.FindAsync(id);
 
@@ -34,12 +34,19 @@ namespace MilaAPI.Controllers
 				return NotFound();
 			}
 
-			return category;
+			var categoryDto = new CategoryDto
+			{
+				Name = category.Name,
+				Description = category.Description
+			};
+
+			return Ok(categoryDto);
 		}
+
 
 		// POST: api/Category
 		[HttpPost]
-		public async Task<ActionResult<Category>> CreateCategory(CategoryDto categoryDto)
+		public async Task<ActionResult<CategoryDto>> CreateCategory(CategoryDto categoryDto)
 		{
 			var category = new Category
 			{
@@ -50,7 +57,7 @@ namespace MilaAPI.Controllers
 			_context.Categories.Add(category);
 			await _context.SaveChangesAsync();
 
-			return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
+			return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, categoryDto);
 		}
 
 		// PUT: api/Category/{id}

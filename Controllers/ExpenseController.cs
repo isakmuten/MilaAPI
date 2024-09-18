@@ -18,12 +18,25 @@ namespace MilaAPI.Controllers
 			_context = context;
 		}
 
-		// GET: api/Expense
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<Expense>>> GetExpenses()
+		public async Task<ActionResult<IEnumerable<ExpenseDto>>> GetExpenses()
 		{
-			return await _context.Expenses.Include(e => e.Category).Include(e => e.User).ToListAsync();
+			var expenses = await _context.Expenses
+				.Include(e => e.Category)
+				.Include(e => e.User)
+				.Select(e => new ExpenseDto
+				{
+					Amount = e.Amount,
+					Date = e.Date,
+					Description = e.Description,
+					CategoryId = e.CategoryId,
+					UserId = e.UserId
+				})
+				.ToListAsync();
+
+			return Ok(expenses);
 		}
+
 
 		// GET: api/Expense/{id}
 		[HttpGet("{id}")]
