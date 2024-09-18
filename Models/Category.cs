@@ -8,4 +8,5 @@ public class Category
 
 	// Navigation property for the expenses under this category
 	public ICollection<Expense> Expenses { get; set; }
+	public bool IsExpenseCategory { get; internal set; }
 }

@@ -6,10 +6,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// Configure DbContext for SQL Server
 builder.Services.AddDbContext<MilaContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 builder.Services.AddSingleton(new JwtService(
@@ -19,50 +20,56 @@ builder.Services.AddSingleton(new JwtService(
 ));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-{
-	options.Events = new JwtBearerEvents
+	.AddJwtBearer(options =>
 	{
-		OnAuthenticationFailed = context =>
+		options.Events = new JwtBearerEvents
 		{
-			Console.WriteLine("Authentication failed: " + context.Exception.Message);
-			return Task.CompletedTask;
-		},
-		OnTokenValidated = context =>
+			OnAuthenticationFailed = context =>
+			{
+				Console.WriteLine("Authentication failed: " + context.Exception.Message);
+				return Task.CompletedTask;
+			},
+			OnTokenValidated = context =>
+			{
+				Console.WriteLine("Token validated successfully");
+				return Task.CompletedTask;
+			}
+		};
+
+		options.TokenValidationParameters = new TokenValidationParameters
 		{
-			Console.WriteLine("Token validated successfully");
-			return Task.CompletedTask;
-		}
-	};
+			ValidateIssuer = true,
+			ValidateAudience = true,
+			ValidateLifetime = true,
+			ValidateIssuerSigningKey = true,
+			ValidIssuer = jwtSettings["Issuer"],
+			ValidAudience = jwtSettings["Audience"],
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
+		};
+	});
 
-	options.TokenValidationParameters = new TokenValidationParameters
-	{
-		ValidateIssuer = true,
-		ValidateAudience = true,
-		ValidateLifetime = true,
-		ValidateIssuerSigningKey = true,
-		ValidIssuer = jwtSettings["Issuer"],
-		ValidAudience = jwtSettings["Audience"],
-		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]))
-	};
-});
+// Add NotificationService as a scoped service
+builder.Services.AddScoped<NotificationService>();
 
-builder.Services.AddHostedService<NotificationService>();
+// Add NotificationBackgroundService as a hosted service
+builder.Services.AddHostedService<NotificationBackgroundService>();
 
+// Configure Controllers with JSON Options to handle Reference Cycles
 builder.Services.AddControllers()
 	.AddJsonOptions(options =>
 	{
 		options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-		options.JsonSerializerOptions.MaxDepth = 64;  // You can increase this value if needed.
+		options.JsonSerializerOptions.MaxDepth = 64; // Adjust based on your needs
 	});
 
+// Configure Swagger for API documentation and JWT Authentication
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
 	c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
 	{
 		In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-		Description = "Please enter JWT with Bearer into field",
+		Description = "Please enter JWT with Bearer into the field",
 		Name = "Authorization",
 		Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey
 	});
@@ -77,14 +84,14 @@ builder.Services.AddSwaggerGen(c =>
 					Id = "Bearer"
 				}
 			},
-			new string[] {}
+			new string[] { }
 		}
 	});
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();

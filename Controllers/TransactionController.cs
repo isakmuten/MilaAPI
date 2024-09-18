@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MilaAPI.DTOs;
 using MilaAPI.Models;
+using MilaAPI.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,10 +13,12 @@ namespace MilaAPI.Controllers
 	public class TransactionController : ControllerBase
 	{
 		private readonly MilaContext _context;
+		private readonly TransactionProcessingService _transactionProcessingService;
 
-		public TransactionController(MilaContext context)
+		public TransactionController(MilaContext context, TransactionProcessingService transactionProcessingService )
 		{
 			_context = context;
+			_transactionProcessingService = transactionProcessingService;
 		}
 
 		// GET: api/Transaction
@@ -74,11 +77,11 @@ namespace MilaAPI.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Transaction>> CreateTransaction(TransactionDto transactionDto)
 		{
+			// Create the transaction entity from the DTO
 			var transaction = new Transaction
 			{
 				Amount = transactionDto.Amount,
 				Balance = transactionDto.Balance,
-
 				Date = transactionDto.Date,
 				Description = transactionDto.Description,
 				Type = Enum.Parse<TransactionType>(transactionDto.Type),
@@ -87,11 +90,19 @@ namespace MilaAPI.Controllers
 				PaymentMethod = Enum.Parse<PaymentMethod>(transactionDto.PaymentMethod)
 			};
 
-			_context.Transactions.Add(transaction);
-			await _context.SaveChangesAsync();
-
-			return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+			try
+			{
+				// Process the transaction using the service, which handles both adding and linking expenses.
+				await _transactionProcessingService.ProcessTransactionAsync(transactionDto);
+				return CreatedAtAction(nameof(GetTransaction), new { id = transaction.Id }, transaction);
+			}
+			catch (ArgumentException ex)
+			{
+				// Return a bad request if there's an error with the arguments
+				return BadRequest(ex.Message);
+			}
 		}
+
 
 		// PUT: api/Transaction/{id}
 		[HttpPut("{id}")]
