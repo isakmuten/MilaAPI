@@ -1,4 +1,4 @@
-﻿Entities Summary
+﻿/*Entities Summary
 1. User Entity:
    * Purpose: Represents each user in the system.
    * Attributes:
@@ -115,4 +115,4 @@ Current Features Built
    * Integrated DTOs for better data transfer and validation.
 6. IHostedService Integration:
    * A background service (NotificationBackgroundService) periodically checks the database to trigger notifications for various conditions such as overdue recurring expenses, saving goal deadlines, and budgets nearing their limits.
-________________
+________________*/

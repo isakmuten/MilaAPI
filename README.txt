@@ -1,4 +1,4 @@
-﻿INSTRUCTIONS FOR RUNNING THE APP
+﻿/*INSTRUCTIONS FOR RUNNING THE APP
 
 	1. Open cmd
 	2. run: git clone https://github.com/isakmuten/MilaAPI.git
@@ -31,4 +31,4 @@ When running:
 			Example: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwiZW1haWwiOiJpc2FrQG11dGVuLmNvbSIsIm5i
 			ZiI6MTcyNjY3MzA3OSwiZXhwIjoxNzI2Njc2Njc5LCJpYXQiOjE3MjY2NzMwNzksImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcxOTkiLCJhd
 			WQiOiJodHRwczovL2xvY2FsaG9zdDo3MTk5In0.PNrxbd6_nddrikid3_UKPEPJNyo5iOQKMFSCGlJX70M
-	6. Now you're logged in and able to test alla the features available. 
+	6. Now you're logged in and able to test alla the features available. */

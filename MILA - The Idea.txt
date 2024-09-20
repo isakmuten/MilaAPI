@@ -1,5 +1,4 @@
-﻿
-MILA – Money, Investments, Ledger, Analysis
+﻿/* MILA – Money, Investments, Ledger, Analysis
 
 Overview:
 MILA is designed to simplify personal finance management by automatically 
@@ -109,4 +108,4 @@ Future Implementations:
 Philosophy:
 By implementing gamified rewards and promoting the idea that 
 "saving money allows for responsible spending," 
-MILA incentivizes users to balance saving and spending responsibly.
+MILA incentivizes users to balance saving and spending responsibly.*/

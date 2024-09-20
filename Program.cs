@@ -6,11 +6,11 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure DbContext for SQL Server
+// Configuring DbContext for SQL Server
 builder.Services.AddDbContext<MilaContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Configure JWT Authentication
+// Configuring JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 
 builder.Services.AddSingleton(new JwtService(
@@ -48,16 +48,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 		};
 	});
 
-// Add NotificationService as a scoped service
+// NotificationService as a scoped service
 builder.Services.AddScoped<NotificationService>();
 
-// Add TransactionProcessingService as a scoped service
+// TransactionProcessingService as a scoped service
 builder.Services.AddScoped<TransactionProcessingService>();
 
-// Add NotificationBackgroundService as a hosted service
+// NotificationBackgroundService as a hosted service
 builder.Services.AddHostedService<NotificationBackgroundService>();
 
-// Configure Controllers with JSON Options to handle Reference Cycles
+// Configuring Controllers with JSON Options to handle Reference Cycles
 builder.Services.AddControllers()
 	.AddJsonOptions(options =>
 	{
@@ -65,7 +65,7 @@ builder.Services.AddControllers()
 		options.JsonSerializerOptions.MaxDepth = 64; // Adjust based on your needs
 	});
 
-// Configure Swagger for API documentation and JWT Authentication
+// Configuring Swagger for API documentation and JWT Authentication
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -94,7 +94,13 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Apply migrations and seed the database
+//Accept requests from Flutter
+app.UseCors(policy =>
+	policy.AllowAnyOrigin()
+		  .AllowAnyMethod()
+		  .AllowAnyHeader());
+
+// Applying migrations and seed the database
 using (var scope = app.Services.CreateScope())
 {
 	var context = scope.ServiceProvider.GetRequiredService<MilaContext>();
@@ -106,7 +112,7 @@ using (var scope = app.Services.CreateScope())
 	DataSeeder.SeedUsers(context);
 }
 
-// Configure the HTTP request pipeline
+// Configuring the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();
